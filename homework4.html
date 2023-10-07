@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.25.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.15.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.22.2"></script>
+</head>
+<body>
+  <div id="vis"/>
+  <script>
+    const spec = {
+  "title": "Top 50 University by Chosen Ranking and Chosen Indicator",
+  "width": 300,
+  "height": 1800,
+  "data": {
+    "url": "https://raw.githubusercontent.com/whuo0004/3179DV2/main/Datasets/rankings_ds.csv"
+  },
+  "params": [
+    {
+      "name": "cs",
+      "value": "ovr_rank",
+      "bind": {
+        "input": "select",
+        "options": [
+          "ovr_rank",
+          "tch_rank",
+          "res_rank",
+          "cit_rank",
+          "ind_rank",
+          "int_rank",
+          "std_rank",
+          "stf_rank"
+        ],
+        "labels": [
+          "Overall Ranking",
+          "Teaching Ranking",
+          "Research Ranking",
+          "Citation Ranking",
+          "Industry Income Ranking",
+          "International Outlook Ranking",
+          "No. of Students Ranking",
+          "Student to Staff Ratio Ranking"
+        ],
+        "name": "Select Ranking:"
+      }
+    },
+    {
+      "name": "sc",
+      "value": "ovr_score",
+      "bind": {
+        "input": "select",
+        "options": [
+          "ovr_score",
+          "tch_score",
+          "res_score",
+          "cit_score",
+          "ind_score",
+          "int_score",
+          "std_stat",
+          "stf_stat"
+        ],
+        "labels": [
+          "Overall Score",
+          "Teaching Score",
+          "Research Score",
+          "Citation Score",
+          "Industry Income Score",
+          "International Outlook Score",
+          "No. of Students",
+          "Student to Staff Ratio"
+        ],
+        "name": "Select Score:"
+      }
+    }
+  ],
+  "transform": [
+    {"calculate": "datum[cs]", "as": "selectedCriteriaRank"},
+    {"calculate": "datum[sc]", "as": "selectedCriteriaScore"},
+    {"filter": {"field": "selectedCriteriaRank", "lte": 50}}
+  ],
+  "mark": {"type": "bar", "color": "#008080"},
+  "encoding": {
+    "x": {
+      "field": "selectedCriteriaScore",
+      "type": "quantitative",
+      "axis": {"title": "Score"}
+    },
+    "y": {
+      "field": "name",
+      "type": "nominal",
+      "sort": {"field": "selectedCriteriaRank", "order": "ascending"},
+      "axis": {"title": "University Names"}
+    },
+    "tooltip": [
+      {"field": "name", "title": "University"},
+      {"field": "selectedCriteriaRank", "title": "Rank in Chosen Ranking"},
+      {"field": "selectedCriteriaScore", "title": "Score in Chosen Indicator"}
+    ]
+  },
+  "config": {"background": null}
+};
+    vegaEmbed("#vis", spec, {mode: "vega-lite"}).then(console.log).catch(console.warn);
+  </script>
+</body>
+</html>
