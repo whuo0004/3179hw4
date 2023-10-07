@@ -1,12 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
+  integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css">
   <script src="https://cdn.jsdelivr.net/npm/vega@5.25.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.15.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.22.2"></script>
 </head>
 <body>
-  <div id="vis"/>
+  <div class="pure-g">
+    <div class="pure-u-1 pure-u-md-1-3" >
+      <div id="vis"></div>
+    </div>
+    <div class="pure-u-1 pure-u-md-1-3" >
+      <div id="vis2"></div>
+    </div>
+  </div>
   <script>
     const spec = {
   "title": "Top 50 University by Chosen Ranking and Chosen Indicator",
@@ -100,6 +110,50 @@
   "config": {"background": null}
 };
     vegaEmbed("#vis", spec, {mode: "vega-lite"}).then(console.log).catch(console.warn);
+  </script>
+  <script>
+    const spec2 = {
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Number of Top 1000 Universities in Different Countries (2023)",
+  "width": 800,
+  "height": 400,
+  "projection": {"type": "naturalEarth1"},
+  "data": {
+    "url": "https://raw.githubusercontent.com/whuo0004/3179/main/worldmap.json",
+    "format": {"type": "topojson", "feature": "ne_110m_admin_0_countries"}
+  },
+  "transform": [
+    {
+      "lookup": "properties.NAME",
+      "from": {
+        "data": {
+          "url": "https://raw.githubusercontent.com/whuo0004/3179/main/2023_rankings_HW3_updated.csv"
+        },
+        "key": "location",
+        "fields": ["location", "loc_count"]
+      }
+    },
+    {"calculate": "datum.loc_count + 1", "as": "Number of Universities"}
+  ],
+  "mark": {"type": "geoshape", "stroke": "gray", "strokeWidth": 1},
+  "encoding": {
+    "color": {
+      "field": "Number of Universities",
+      "type": "quantitative",
+      "scale": {"type": "log", "scheme": "blues"}
+    },
+    "tooltip": [
+      {"field": "properties.NAME", "type": "nominal", "title": "Country"},
+      {
+        "field": "loc_count",
+        "type": "quantitative",
+        "title": "No. of University in Top 1000"
+      }
+    ]
+  },
+  "config": {}
+};
+    vegaEmbed("#vis2", spec2, {mode: "vega-lite"}).then(console.log).catch(console.warn);
   </script>
 </body>
 </html>
